@@ -30,7 +30,7 @@ class Graph:
     
     def regex_to_afn(self, current_state, regex):
         state_count = current_state.name + 1
-        pos = 0
+        pos = 1
         while pos < len(regex):
             char = regex[pos]
             if char == '[':
