@@ -14,3 +14,10 @@ class State:
     
     def setState(cls, content: str ):
         cls.list_states = content
+        
+    def add_epsilon_transition(self, next_state):
+            epsilon = 'ε'
+            if epsilon in self.transitions:
+                self.transitions[epsilon].append(next_state)
+            else:
+                self.transitions[epsilon] = [next_state]
