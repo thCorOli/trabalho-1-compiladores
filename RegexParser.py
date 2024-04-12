@@ -64,7 +64,7 @@ class RegexParser:
         loop_end.add_transition('ε', {loop_start})
         return i + 1, loop_end
 
-    def handle_question(self, i, current_state):
+    def handle_optional(self, i, current_state):
         optional_end = self.create_state()
         current_state.add_transition('ε', {optional_end})
         self.parse_regex(self.regex, i + 1, i + 2, current_state, optional_end)
@@ -83,8 +83,8 @@ class RegexParser:
             elif pattern[i] == '+':
                 i, current_state = self.handle_plus(i, current_state)
             elif pattern[i] == '?':
-                i, current_state = self.handle_question(i, current_state)
-            else:  # Para caracteres e concatenação direta
+                i, current_state = self.handle_optional(i, current_state)
+            else: 
                 if pattern[i] != '.':
                     next_state = self.create_state()
                     current_state.add_transition(pattern[i], {next_state})
