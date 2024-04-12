@@ -1,7 +1,7 @@
-from Graph import Graph
-graph = Graph()
+from RegexParser import RegexParser
 
-if __name__ == '__main__':
-    graph.config_graph()
-    graph.regex_to_afn(graph.start_state,"([A-z]|[0-9])+@([A-z]|[0-9])+.com")
-    graph.display()
+if __name__ == "__main__":
+    regex = "(a|b)*abb"
+    parser = RegexParser(regex)
+    parser.parse()
+    parser.graph.display()
