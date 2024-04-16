@@ -2,17 +2,20 @@ from State import State
 
 class NFA:
     def __init__(self):
-        self.start_state = State()
+        self.start_state = State()  # State0 será o estado inicial
         self.states = {self.start_state}
 
     def add_state(self, is_accept_state=False):
-        new_state = State(is_accept_state)
+        new_state = State(is_accept_state=is_accept_state)
         self.states.add(new_state)
         return new_state
 
     def add_transition(self, from_state, symbol, to_state):
         from_state.add_transition(symbol, to_state)
 
+    def __str__(self):
+        return "\n".join(str(state) for state in sorted(self.states, key=lambda x: x.name))
+    
     def epsilon_closure(self, states):
         closure = set(states)
         stack = list(states)
@@ -34,5 +37,3 @@ class NFA:
         from DFA import DFA
         return DFA.from_nfa(self)
 
-    def __str__(self):
-        return "NFA with states: " + ", ".join(str(s) for s in self.states)
