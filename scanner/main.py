@@ -2,7 +2,7 @@ from RegexConverter import regex_to_nfa
 from NFA import NFA
 
 def main():
-    regex = "[A-z]"
+    regex = "([0-9]+)"
     nfa = regex_to_nfa(regex)
     print(nfa)
 

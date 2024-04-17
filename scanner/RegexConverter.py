@@ -1,5 +1,6 @@
 from NFA import NFA
 from State import State
+import re
 
 def basic_nfa(char_range):
     start = State()
@@ -84,13 +85,55 @@ def regex_to_nfa(regex):
     stack = []
     i = 0
     while i < len(regex):
-        if regex.startswith('[A-z]', i):
-            # Assuming we're working with [A-z]
-            char_nfa = basic_nfa('A-z')
-            if i + 5 < len(regex) and regex[i+5] == '*':
-                char_nfa = star(char_nfa)
-                i += 1  # Skip the '*' character
-            stack.append(char_nfa)
-            i += 4  # Skip the '[A-z]'
-        i += 1
+        if regex[i] == '[':
+            # Encontrar o fechamento do colchete
+            end = regex.find(']', i)
+            if end == -1:
+                raise ValueError("Unmatched '[' in regex")
+            # Interpretar o conteúdo dentro dos colchetes
+            char_range = regex[i+1:end]
+            if '-' in char_range:
+                start_char, end_char = char_range.split('-')
+                nfa = basic_nfa(f'{start_char}-{end_char}')
+            else:
+                nfa = basic_nfa(char_range)
+
+            # Verificar se o próximo caractere é um operador de repetição
+            if end + 1 < len(regex) and regex[end+1] in '*+?':
+                if regex[end+1] == '*':
+                    nfa = star(nfa)
+                elif regex[end+1] == '+':
+                    nfa = plus(nfa)
+                elif regex[end+1] == '?':
+                    nfa = optional(nfa)
+                end += 1  # Avançar o índice para pular o operador de repetição
+
+            stack.append(nfa)
+            i = end + 1  # Avançar o índice para continuar após o colchete fechado e operador
+        else:
+            # Tratar caracteres e operadores individuais
+            if regex[i] in '*+?|':
+                # Aplicar operadores sobre o último NFA na pilha
+                if regex[i] == '*':
+                    nfa = star(stack.pop())
+                elif regex[i] == '+':
+                    nfa = plus(stack.pop())
+                elif regex[i] == '?':
+                    nfa = optional(stack.pop())
+                elif regex[i] == '|':
+                    nfa2 = stack.pop()
+                    nfa1 = stack.pop()
+                    nfa = union(nfa1, nfa2)
+                stack.append(nfa)
+            else:
+                # Tratar caracteres individuais que não são metacaracteres
+                stack.append(basic_nfa(regex[i]))
+            i += 1
+
+    # Resolver concatenações implícitas
+    while len(stack) > 1:
+        nfa2 = stack.pop()
+        nfa1 = stack.pop()
+        stack.append(concatenate(nfa1, nfa2))
+
     return stack.pop() if stack else None
