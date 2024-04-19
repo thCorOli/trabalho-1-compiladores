@@ -5,14 +5,17 @@ import re
 def basic_nfa(char_range):
     start = State()
     accept = State(is_accept_state=True)
+    nfa = NFA()
     if '-' in char_range:
         start_range, end_range = char_range.split('-')
         for char_code in range(ord(start_range), ord(end_range) + 1):
+            new_state = State()
             char = chr(char_code)
-            start.add_transition(char, accept)
+            start.add_transition(char, new_state)
+            nfa.states.add(new_state)
+            new_state.add_transition(char,new_state)
     else:
         start.add_transition(char_range, accept)
-    nfa = NFA()
     nfa.start_state = start
     nfa.states.add(start)
     nfa.states.add(accept)
@@ -81,7 +84,6 @@ def union(nfa1, nfa2):
     return nfa1
 
 def regex_to_nfa(regex):
-    """ Converts a regular expression to an NFA using Thompson's construction. """
     stack = []
     i = 0
     while i < len(regex):
@@ -97,7 +99,7 @@ def regex_to_nfa(regex):
                 nfa = basic_nfa(f'{start_char}-{end_char}')
             else:
                 nfa = basic_nfa(char_range)
-
+        
             # Verificar se o próximo caractere é um operador de repetição
             if end + 1 < len(regex) and regex[end+1] in '*+?':
                 if regex[end+1] == '*':
