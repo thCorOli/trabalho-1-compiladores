@@ -1,0 +1,6 @@
+('Int', r'\d+'), 
+('IDENTIFIER',r'int'),
+('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*'), 
+('PLUS', r'\+'),
+('MINUS', r'-'), 
+('EQUAL', r'=')
