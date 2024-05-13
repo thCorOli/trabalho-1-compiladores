@@ -1,5 +1,5 @@
 import unittest
-from tokenizer import scan_gen
+from scanner.tokenizer import scan_gen
 
 class TestTokenizer(unittest.TestCase):
     def setUp(self):
@@ -16,12 +16,12 @@ class TestTokenizer(unittest.TestCase):
 
     def test_simple_assignment(self):
         result = self.scan("a = 12")
-        expected = [('IDENTIFIER', 'a'), ('EQUAL', '='), ('Int', '12')]
+        expected = [('IDENTIFIER', 'a'), ('EQUAL', '='), ('NUMBER', '12')]
         self.assertEqual(result, expected)
 
     def test_operation(self):
         result = self.scan("a = x / y - 1")
-        expected = [('IDENTIFIER', 'a'),('EQUAL', '='),('IDENTIFIER', 'x'), ('DIVIDE', '/'), ('IDENTIFIER', 'y'), ('MINUS', '-'), ('Int', '1')]
+        expected = [('IDENTIFIER', 'a'),('EQUAL', '='),('IDENTIFIER', 'x'), ('DIVIDE', '/'), ('IDENTIFIER', 'y'), ('MINUS', '-'), ('NUMBER', '1')]
         self.assertEqual(result, expected)
 
 
@@ -32,7 +32,7 @@ class TestTokenizer(unittest.TestCase):
 
     def test_complex_expression(self):
         result = self.scan("varA = var2 + 3 * (5 - 2)")
-        expected = [('IDENTIFIER', 'varA'), ('EQUAL', '='), ('IDENTIFIER', 'var2'), ('PLUS', '+'), ('Int', '3'),('Int', '5'), ('MINUS', '-'), ('Int', '2')]
+        expected = [('IDENTIFIER', 'varA'), ('EQUAL', '='), ('IDENTIFIER', 'var2'), ('PLUS', '+'), ('NUMBER', '3'),('NUMBER', '5'), ('MINUS', '-'), ('NUMBER', '2')]
         self.assertEqual(result, expected)
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from Automato import Automato
+from scanner.Automato import Automato
 
 def scan_gen(token_specs):
     automata = [Automato(name, pattern) for name, pattern in token_specs]
