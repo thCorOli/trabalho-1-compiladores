@@ -1,5 +1,6 @@
-from scanner.tokenizer import scan_gen
+from scanner.tokenizer import Scanner
 from parser.parser_1 import Parser
+import graphviz
 token_specs = [
     ('NUMBER', r'\d+'), 
     ('IDENTIFIER',r'int'),
@@ -9,10 +10,10 @@ token_specs = [
     ('EQUAL', r'=')
 ]
 
-scan = scan_gen(token_specs)
+scan = Scanner.scan_gen(token_specs)
 
 tokens = scan('varA = var2 + 3 * (5 - 2)')
-#print(tokens) 
+print(tokens) 
 parser = Parser(tokens)
 ast = parser.parse()
-print(ast)
+#print(ast)

@@ -1,5 +1,7 @@
+import sys
+sys.path.append('/root/Faculdade/compiladores/trab-1/')
+from scanner.tokenizer import Scanner
 import unittest
-from scanner.tokenizer import scan_gen
 
 class TestTokenizer(unittest.TestCase):
     def setUp(self):
@@ -12,7 +14,7 @@ class TestTokenizer(unittest.TestCase):
             ('DIVIDE',r'/'),
             ('INT',r'int'),
         ]
-        self.scan = scan_gen(token_specs)
+        self.scan = Scanner.scan_gen(token_specs)
 
     def test_simple_assignment(self):
         result = self.scan("a = 12")

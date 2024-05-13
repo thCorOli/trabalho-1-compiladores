@@ -1,31 +1,36 @@
 from scanner.Automato import Automato
 
-def scan_gen(token_specs):
-    automata = [Automato(name, pattern) for name, pattern in token_specs]
+class Scanner:
 
-    def tokenizer(input_string):
-        tokens = []
-        input_string += ' '  
-        last_match_end = 0  
+    def __init__(self):
+        pass
+    
+    def scan_gen(token_specs):
+        automata = [Automato(name, pattern) for name, pattern in token_specs]
 
-        for i in range(len(input_string)):
-            matched_this_round = False
-            for automaton in automata:
-                automaton.reset()
-                for j in range(i, len(input_string)):
-                    if not automaton.match(input_string[j]):
-                        break
-                if automaton.current:
-                    if j > last_match_end:  
-                        last_match_end = j
-                        longest_match = automaton.get_token()
-                        match_start_position = i
-                        matched_this_round = True
+        def tokenizer(input_string):
+            tokens = []
+            input_string += ' '  
+            last_match_end = 0  
 
-            if matched_this_round and i == match_start_position:
-                tokens.append(longest_match)
-                i = last_match_end - 1  
+            for i in range(len(input_string)):
+                matched_this_round = False
+                for automaton in automata:
+                    automaton.reset()
+                    for j in range(i, len(input_string)):
+                        if not automaton.match(input_string[j]):
+                            break
+                    if automaton.current:
+                        if j > last_match_end:  
+                            last_match_end = j
+                            longest_match = automaton.get_token()
+                            match_start_position = i
+                            matched_this_round = True
 
-        return tokens
+                if matched_this_round and i == match_start_position:
+                    tokens.append(longest_match)
+                    i = last_match_end - 1  
 
-    return tokenizer
+            return tokens
+
+        return tokenizer
