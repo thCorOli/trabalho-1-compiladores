@@ -1,36 +1,23 @@
 from scanner.Automato import Automato
-
 class Scanner:
-
-    def __init__(self):
-        pass
-    
+    @staticmethod
     def scan_gen(token_specs):
-        automata = [Automato(name, pattern) for name, pattern in token_specs]
+        automata = [Automato(name, pattern, is_keyword) for name, pattern, is_keyword in token_specs]
 
         def tokenizer(input_string):
-            tokens = []
-            input_string += ' '  
-            last_match_end = 0  
-
-            for i in range(len(input_string)):
-                matched_this_round = False
-                for automaton in automata:
-                    automaton.reset()
-                    for j in range(i, len(input_string)):
-                        if not automaton.match(input_string[j]):
+                tokens = []
+                i = 0
+                while i < len(input_string):
+                    matched = False
+                    for automaton in automata:
+                        result = automaton.match(input_string[i:])
+                        if result:
+                            tokens.append((automaton.name, result))
+                            i += len(result)  # Avança o índice pelo tamanho do token
+                            matched = True
                             break
-                    if automaton.current:
-                        if j > last_match_end:  
-                            last_match_end = j
-                            longest_match = automaton.get_token()
-                            match_start_position = i
-                            matched_this_round = True
+                    if not matched:
+                        i += 1  # Se nenhum token for encontrado, avance um caractere
 
-                if matched_this_round and i == match_start_position:
-                    tokens.append(longest_match)
-                    i = last_match_end - 1  
-
-            return tokens
-
+                return tokens
         return tokenizer

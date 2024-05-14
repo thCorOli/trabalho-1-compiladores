@@ -1,13 +1,31 @@
 import re
 
 class Automato:
-    def __init__(self, name, pattern):
+    def __init__(self, name, pattern, is_keyword=False):
         self.name = name
         self.pattern = re.compile(pattern)
+        self.is_keyword = is_keyword
         self.reset()
-        self.states = []
-        self.transitions = []
 
+    def reset(self):
+        self.current = ''
+        self.is_final = False
+
+    def match(self, text):
+        # Usamos match para verificar do início do texto
+        m = self.pattern.match(text)
+        if m:
+            return m.group(0)  # Retorna a correspondência exata
+        return None
+
+
+    def get_token(self):
+        if self.is_final:
+            token = (self.name, self.current.strip())
+            self.reset()
+            return token
+        return None
+    
     def build_simple_automaton(self):
         current_state = 0
         for i, char in enumerate(self.pattern):
@@ -27,17 +45,3 @@ class Automato:
             print(f"{from_state} -> {to_state} on '{symbol}'")
 
 
-    def reset(self):
-        self.current = ''
-
-    def match(self, char):
-        test_string = self.current + char
-        if re.fullmatch(self.pattern, test_string):
-            self.current = test_string
-            return True
-        return False
-
-    def get_token(self):
-        token = (self.name, self.current)
-        self.reset()  
-        return token

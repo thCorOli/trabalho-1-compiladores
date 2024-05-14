@@ -5,7 +5,7 @@ class ASTNode:
         self.children = children if children is not None else []
 
     def __repr__(self):
-        return f"ASTNode({self.type}, {repr(self.value)}, {self.children})"
-
+        return f"Arvore Sintatica:\n Nó ({self.type},{repr(self.value)})\n Filhos -> {self.children}\n"
+    
     def add_child(self, node):
         self.children.append(node)
