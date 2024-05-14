@@ -17,7 +17,7 @@ class Parser:
 
     def expression(self):
         if self.lookahead('FLOAT') or self.lookahead('INT'):
-            type_token = self.eat(self.tokens[self.position][0])
+            type_token = self.eat(self.tokens[self.position][0])  # Handle type declarations
             identifier_token = self.eat('IDENTIFIER')
             self.eat('EQUAL')
             expr_node = self.expr()
@@ -37,7 +37,7 @@ class Parser:
 
     def term(self):
         node = self.factor()
-        while self.position < len(self.tokens) and self.tokens[self.position][0] in ('MULT', 'DIV'):
+        while self.position < len(self.tokens) and self.tokens[self.position][0] in ('MULTIPLY', 'DIVIDE'):
             op = self.eat(self.tokens[self.position][0])
             right = self.factor()
             node = ASTNode('op', op[1], [node, right])
@@ -57,11 +57,9 @@ class Parser:
             node = self.expr()
             self.eat('RPAREN')
             return node
-        elif self.lookahead('IF'):
-            return self.if_statement()
         else:
             raise Exception(f"Unexpected token: {self.tokens[self.position]}")
-        
+
     def lookahead_next(self, token_type):
         return self.position + 1 < len(self.tokens) and self.tokens[self.position + 1][0] == token_type
 
@@ -82,7 +80,7 @@ class Parser:
         self.eat('EQUAL')
         expr = self.expr()
         return ASTNode('assignment', ident[1], [expr])
-    
+
     def if_statement(self):
         self.eat('IF')
         self.eat('LPAREN')
@@ -110,10 +108,8 @@ class Parser:
             if self.lookahead_next('EQUAL'):
                 return self.assignment()
             else:
-                # Caso simples onde apenas um identificador pode ser uma expressão por si só (ex: chamada de função)
                 return self.expr()
         elif self.lookahead('LBRACE'):
             return self.block()
         else:
             raise Exception(f"Unsupported or unexpected token: {self.tokens[self.position]}")
-
