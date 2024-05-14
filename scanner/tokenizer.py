@@ -13,11 +13,11 @@ class Scanner:
                         result = automaton.match(input_string[i:])
                         if result:
                             tokens.append((automaton.name, result))
-                            i += len(result)  # Avança o índice pelo tamanho do token
+                            i += len(result) 
                             matched = True
                             break
                     if not matched:
-                        i += 1  # Se nenhum token for encontrado, avance um caractere
+                        i += 1  
 
                 return tokens
         return tokenizer

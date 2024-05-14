@@ -1,11 +1,14 @@
 class ASTNode:
-    def __init__(self, node_type, value=None, children=None):
-        self.type = node_type
+    def __init__(self, token_type, value, children=None):
+        self.token_type = token_type
         self.value = value
-        self.children = children if children is not None else []
+        self.children = children or []
+
+    def __str__(self, level=0):
+        ret = "  " * level + f"{self.token_type} {self.value}\n"
+        for child in self.children:
+            ret += child.__str__(level + 1)
+        return ret
 
     def __repr__(self):
-        return f"Arvore Sintatica:\n Nó ({self.type},{repr(self.value)})\n Filhos -> {self.children}\n"
-    
-    def add_child(self, node):
-        self.children.append(node)
+        return self.__str__()

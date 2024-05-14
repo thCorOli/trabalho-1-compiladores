@@ -10,14 +10,14 @@ token_specs = [
     ('PLUS', r'\+', False),  
     ('MINUS', r'-', False),  
     ('EQUAL', r'=', False),
+    ('MULTIPLY',r'*',False)
 ]
 
 scan = Scanner.scan_gen(token_specs)
 
-tokens = scan('float varA = var2 + 3 * (5 - 2)')
+tokens = scan('float varA = 3 * (5 - 2)')
 print(tokens) 
-'''
 parser = Parser(tokens)
 ast = parser.parse()
+print('\nSaida Parser\n')
 print(ast)
-'''
