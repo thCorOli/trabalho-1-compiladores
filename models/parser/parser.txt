@@ -1,0 +1,11 @@
+SUB Power(DIM x, n AS BYTE) AS LONGINT
+    DIM i AS BYTE
+    result = 1
+    IF n = 0 THEN
+        result = 1
+    ELSE
+        FOR i = 1 TO n
+            result = result * x
+        NEXT i
+    END IF
+END SUB

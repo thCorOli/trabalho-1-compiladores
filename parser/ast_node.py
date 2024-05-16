@@ -4,11 +4,19 @@ class ASTNode:
         self.value = value
         self.children = children or []
 
-    def __str__(self, level=0):
-        ret = "  " * level + f"{self.token_type} {self.value}\n"
-        for child in self.children:
-            ret += child.__str__(level + 1)
-        return ret
+    def __str__(self):
+        ret = ""
+        stack = [(self, 0)]
 
+        while stack:
+            node, level = stack.pop()
+            if node is None:
+                continue
+            ret += "     " * level + f"{node.token_type} {node.value}\n"
+            for child in reversed(node.children):
+                stack.append((child, level + 1))
+
+        return ret
+    
     def __repr__(self):
         return self.__str__()
