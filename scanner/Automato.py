@@ -12,7 +12,7 @@ class Automato:
         self.is_final = False
 
     def match(self, text):
-        # Usamos match para verificar do início do texto
+        # Usamos match para verificar o início do texto
         m = self.pattern.match(text)
         if m:
             return m.group(0)  # Retorna a correspondência exata
