@@ -1,5 +1,5 @@
 from scanner.tokenizer import Scanner
-from parser.parser_1 import Parser
+from parser_1.parser_1 import Parser
 
 
 def read_file(archive):

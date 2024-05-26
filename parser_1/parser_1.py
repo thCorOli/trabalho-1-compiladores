@@ -1,4 +1,4 @@
-from parser.ast_node import ASTNode
+from parser_1.ast_node import ASTNode
 
 class Parser:
     def __init__(self, tokens):
@@ -11,10 +11,12 @@ class Parser:
     def eat(self, token_type):
         if self.position < len(self.tokens) and self.tokens[self.position][0] == token_type:
             token = self.tokens[self.position]
-            self.position += 1
+            self.position += 1  
             return token
-        print(f"Expected token {token_type} but found {self.tokens[self.position][0]} at position {self.position}")
-        raise Exception(f"Expected token {token_type} but found {self.tokens[self.position][0]}")
+        else:
+            current_token = self.tokens[self.position][0] if self.position < len(self.tokens) else "None"
+            raise Exception(f"Expected token {token_type}, but found {current_token}")
+
 
     def lookahead(self, token_type):
         return self.position < len(self.tokens) and self.tokens[self.position][0] == token_type
@@ -25,36 +27,43 @@ class Parser:
     def program(self):
         statements = []
         while self.position < len(self.tokens):
-            if self.lookahead('SUB'):
-                statements.append(self.subroutine())
-            else:
-                statements.append(self.statement())
+            statements.append(self.statement())
         return ASTNode('program', '', statements)
 
+
     def statement(self):
-        if self.lookahead('IF'):
+        if self.lookahead('NUMBER'):
+            self.eat('NUMBER') 
+        if self.lookahead('INPUT'):
+            return self.input_statement()
+        elif self.lookahead('PRINT'):
+            return self.print_statement()
+        elif self.lookahead('IF'):
             return self.if_statement()
         elif self.lookahead('FOR'):
             return self.for_statement()
         elif self.lookahead('WHILE'):
             return self.while_statement()
-        elif self.lookahead('SUB'):
-            return self.subroutine()
-        elif self.lookahead('FUNCTION'):
-            return self.function()
-        elif self.lookahead('IDENTIFIER'):
-            if self.lookahead_next('EQUAL'):
-                return self.assignment()
-            else:
-                return self.expr()
-        elif self.lookahead('PRINT'):
-            return self.print_statement()
-        elif self.lookahead('RETURN'):
-            return self.return_statement()
-        elif self.lookahead('DIM'):
-            return self.dim_statement()
+        elif self.lookahead('LET'):
+            return self.let_statement()
+        elif self.lookahead('IDENTIFIER') and self.lookahead_next('EQUAL'):
+            return self.assignment()
+        elif self.lookahead('END'):
+            return self.end_statement() 
         else:
-            raise Exception(f"Unsupported or unexpected token: {self.tokens[self.position]}")
+            raise Exception(f"Unsupported or unexpected token: {self.tokens[self.position][0]}")
+
+    def input_statement(self):
+        self.eat('INPUT')
+        prompt = self.eat('STRING')
+        self.eat('COMMA')  
+        ident = self.eat('IDENTIFIER')
+        return ASTNode('input', '', [ASTNode('string', prompt[1]), ASTNode('identifier', ident[1])])
+
+    
+    def let_statement(self):
+        self.eat('LET')
+        return self.assignment()
 
     def if_statement(self):
         self.eat('IF')
@@ -96,7 +105,7 @@ class Parser:
         params = self.parameters()
         self.eat('RPAREN')
         self.eat('AS')
-        return_type = self.eat('IDENTIFIER')  # Assuming return type
+        return_type = self.eat('IDENTIFIER') 
         body = self.block()
         self.eat('END')
         self.eat('SUB')
@@ -109,7 +118,7 @@ class Parser:
         params = self.parameters()
         self.eat('RPAREN')
         self.eat('AS')
-        return_type = self.eat('IDENTIFIER')  # Assuming return type
+        return_type = self.eat('IDENTIFIER')  
         body = self.block()
         self.eat('END')
         self.eat('FUNCTION')
@@ -145,8 +154,25 @@ class Parser:
 
     def print_statement(self):
         self.eat('PRINT')
-        expr = self.expr()
-        return ASTNode('print', '', [expr])
+        expressions = []
+        while self.position < len(self.tokens) and self.tokens[self.position][0] != 'NEWLINE' and self.tokens[self.position][0] != 'END':
+            expressions.append(self.expr())
+            if self.position < len(self.tokens) and self.tokens[self.position][0] == 'SEMICOLON':
+                self.eat('SEMICOLON')
+            else:
+                break
+        return ASTNode('print', '', expressions)
+
+
+    def expr(self):
+        if self.lookahead('IDENTIFIER'):
+            return ASTNode('identifier', self.eat('IDENTIFIER')[1])
+        elif self.lookahead('STRING'):
+            return ASTNode('string', self.eat('STRING')[1])
+        elif self.lookahead('NUMBER'):
+            return ASTNode('number', self.eat('NUMBER')[1])
+        else:
+            raise Exception("Unsupported expression type")  
 
     def return_statement(self):
         self.eat('RETURN')
@@ -208,3 +234,7 @@ class Parser:
                 args.append(self.expr())
         self.eat('RPAREN')
         return ASTNode('function_call', ident[1], args)
+    
+    def end_statement(self):
+        self.eat('END')
+        return ASTNode('end', '')
