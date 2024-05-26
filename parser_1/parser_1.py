@@ -17,7 +17,6 @@ class Parser:
             current_token = self.tokens[self.position][0] if self.position < len(self.tokens) else "None"
             raise Exception(f"Expected token {token_type}, but found {current_token}")
 
-
     def lookahead(self, token_type):
         return self.position < len(self.tokens) and self.tokens[self.position][0] == token_type
 
@@ -29,7 +28,6 @@ class Parser:
         while self.position < len(self.tokens):
             statements.append(self.statement())
         return ASTNode('program', '', statements)
-
 
     def statement(self):
         if self.lookahead('NUMBER'):
