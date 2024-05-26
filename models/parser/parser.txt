@@ -1,11 +1,5 @@
-SUB Power(DIM x, n AS BYTE) AS LONGINT
-    DIM i AS BYTE
-    result = 1
-    IF n = 0 THEN
-        result = 1
-    ELSE
-        FOR i = 1 TO n
-            result = result * x
-        NEXT i
-    END IF
-END SUB
+10 INPUT "Digite o primeiro número: ", A
+20 INPUT "Digite o segundo número: ", B
+30 LET S = A + B
+40 PRINT "A soma de "; A; " e "; B; " é "; S
+50 END
